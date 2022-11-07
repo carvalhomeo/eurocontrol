@@ -14,13 +14,19 @@ function App() {
   const [secondName, setSecondName] = useState<string>("");
   const [profile, setProfile] = useState<string>("");
   const [selectedCandidate, setSelectedCandidate] = useState<string[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string | null>();
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
-    setCandidates((oldState) => [
-      ...oldState,
-      { firstName, secondName, profile },
-    ]);
+    if (candidates.find((candidate) => candidate.firstName === firstName)) {
+      setErrorMessage("user already exists");
+    } else {
+      setCandidates((oldState) => [
+        ...oldState,
+        { firstName, secondName, profile },
+      ]);
+      setErrorMessage(null);
+    }
   };
 
   const handleDelete = () => {
@@ -75,16 +81,16 @@ function App() {
             ))}
           </tbody>
         </table>
-
-        <button>Add</button>
         <button onClick={handleDelete}>Delete</button>
       </div>
 
-      <div>
+      <div style={{ width: "20%" }}>
         <form
           onSubmit={handleSubmit}
           style={{
-            width: "20%",
+            display: "flex",
+            flexDirection: "column",
+            gap: "12px",
           }}
         >
           <div
@@ -94,30 +100,40 @@ function App() {
               gap: "12px",
             }}
           >
-            <label>First name</label>
-            <input
-              type="text"
-              onChange={(event) => setFirstName(event.target.value)}
-            ></input>
-            <label>Last name</label>
-            <input
-              type="text"
-              onChange={(event) => setSecondName(event.target.value)}
-            ></input>
-
-            <label>Profile</label>
-            <select
-              name="example"
-              onChange={(event) => setProfile(event.target.value)}
-            >
-              {profileTypes.map((profileType) => (
-                <option key={profileType} value={profileType}>
-                  {profileType}
-                </option>
-              ))}
-            </select>
+            <div style={{ display: "flex", gap: "6px" }}>
+              <label>First name</label>
+              <input
+                type="text"
+                onChange={(event) => setFirstName(event.target.value)}
+              ></input>
+            </div>
+            <div style={{ display: "flex", gap: "6px" }}>
+              <label>Last name</label>
+              <input
+                type="text"
+                onChange={(event) => setSecondName(event.target.value)}
+              ></input>
+            </div>
+            <div style={{ display: "flex", gap: "6px" }}>
+              <label>Profile</label>
+              <select
+                name="example"
+                onChange={(event) => setProfile(event.target.value)}
+              >
+                {profileTypes.map((profileType) => (
+                  <option key={profileType} value={profileType}>
+                    {profileType}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
-          <button type="submit">Save</button>
+          <button type="submit" style={{ width: "20%" }}>
+            Save
+          </button>
+          {errorMessage ? (
+            <div style={{ color: "red" }}>{errorMessage}</div>
+          ) : null}
         </form>
       </div>
     </div>
